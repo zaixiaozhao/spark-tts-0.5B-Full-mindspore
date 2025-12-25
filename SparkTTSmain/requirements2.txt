@@ -1,0 +1,6 @@
+conda config --add channels https://repo.huaweicloud.com/ascend/repos/conda/
+conda install ascend::cann-toolkit
+source /root/.conda/Ascend/ascend-toolkit/set_env.sh
+conda install ascend::cann-kernels-910b
+pip3 install attrs cython 'numpy>=1.19.2,<=1.24.0' decorator sympy cffi pyyaml pathlib2 psutil protobuf==3.20.0 scipy requests absl-py --user
+conda install mindspore=2.7.1 -c mindspore -c conda-forge

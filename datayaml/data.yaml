@@ -1,0 +1,109 @@
+seed: 0
+output_dir: "/root/output/output_sparktss_lora"
+run_mode: "finetune"
+
+# 加载权重
+load_checkpoint: "/root/LLM/mindspore_model_final.ckpt"
+load_ckpt_format: "ckpt"
+auto_trans_ckpt: False
+use_parallel: False
+
+trainer:
+  type: CausalLanguageModelingTrainer
+  model_name: "qwen2_05b"
+
+runner_config:
+  epochs: 20
+  batch_size: 2
+  sink_mode: True
+  sink_size: 1
+  gradient_accumulation_steps: 8
+
+optimizer:
+  type: AdamW
+  learning_rate: 0.00002
+  betas: [0.9, 0.95]
+  eps: 1.e-8
+  weight_decay: 0.01
+
+lr_schedule:
+  type: CosineWithWarmUpLR
+  learning_rate: 0.00002
+  lr_end: 1.e-6
+  warmup_ratio: 0.03
+  total_steps: -1
+
+train_dataset: &train_dataset
+  data_loader:
+    type: MindDataset
+    dataset_dir: "/root/output/sparktss_train.mindrecord"
+    shuffle: True
+  # [关键修改 4] 列名必须与 MindRecord Schema 严格一致
+  input_columns: ["input_ids", "labels"]
+  drop_remainder: True
+  batch_size: 1
+  repeat: 1
+
+train_dataset_task:
+  type: CausalLanguageModelDataset
+  dataset_config: *train_dataset
+
+context:
+  mode: 0
+  device_target: "Ascend"
+  device_id: 0
+  max_device_memory: "25GB"
+
+callbacks:
+  - type: MFLossMonitor
+  - type: CheckpointMonitor
+    prefix: "spark_tts"
+    save_checkpoint_steps: 500
+    keep_checkpoint_max: 2
+    integrated_save: False
+    async_save: False
+    checkpoint_format: "safetensors"
+
+model:
+  model_config:
+    type: LlamaConfig
+    seq_length: 2047
+    
+    # [关键修改 5] 必须显式指定扩充后的词表大小
+    vocab_size: 166000
+    
+    hidden_size: 896
+    num_layers: 24
+    num_heads: 14
+    n_kv_heads: 2
+    intermediate_size: 4864
+    qkv_has_bias: True
+    rms_norm_eps: 1.0e-6
+    rope_theta: 1000000.0
+    hidden_act: "silu"
+    bos_token_id: 151643
+    eos_token_id: 151645
+    max_position_embedding: 32768
+    use_past: False
+    use_flash_attention: True
+    compute_dtype: "bfloat16"
+    layernorm_compute_type: "float32"
+    softmax_compute_type: "float32"
+    rotary_dtype: "float32"
+    rms_norm_eps: 0.000001
+
+    # pet_config:
+    #   pet_type: "lora"
+    #   lora_rank: 16
+    #   lora_alpha: 16
+    #   lora_dropout: 0.05
+    #   # [建议] 扩充 LoRA 范围
+    #   target_modules: ".*wq|.*wk|.*wv|.*wo"
+
+  arch:
+    type: LlamaForCausalLM
+  processor:
+    return_tensors: ms
+    tokenizer:
+      vocab_file: "/root/LLM/vocab.json"
+      merges_file: "/root/LLM/merges.txt"
