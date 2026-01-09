@@ -82,6 +82,7 @@ git clone [https://gitee.com/mindspore/mindformers.git](https://gitee.com/mindsp
 cd mindformers
 # 关键: 必须切换到 v1.7.0 版本 (新版本可能存在算子不兼容问题)
 git checkout v1.7.0
+python run_mindformer.py   --config /root/output/finetune_qwen2_sparktss_autogen.yaml   --register_path research/qwen2_5   --use_parallel False   --run_mode finetune
 ```
 
 #### Step 5: 推理 (Inference)
