@@ -108,11 +108,13 @@ python decodec.py
 
 ## Directory Structure
 
-| Name            | Description              |
-|:----------------|:-------------------------|
-| `predata.py`    | 数据转换脚本 (Step 1)          |
-| `datatomind.py` | MindRecord 生成脚本 (Step 2) |
-| `convert.py`    | 模型权重转换脚本 (Step 3)        |
-| `predicate.py`  | 音频解码脚本 (Step 6)          |
-| `decodec.py`    | 项目依赖                     |
+| Name                | Description              |
+|:--------------------|:-------------------------|
+| `predata.py`        | 数据转换脚本 (Step 1)          |
+| `datatomind.py`     | MindRecord 生成脚本 (Step 2) |
+| `convert.py`        | 模型权重转换脚本 (Step 3)        |
+| `predicate.py`      | 推理脚本 (Step 5)            |
+| `decodec.py`        | 音频解码脚本 (Step 6)          |
+| `requirements1.txt` | BiCodec 编解码环境依赖包         |
+| `requirements2.txt` | 模型训练环境依赖包                |
 
