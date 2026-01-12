@@ -10,7 +10,7 @@ from safetensors.torch import load_file  # 需要 pip install safetensors
 # 1. Spark-TTS 源码路径 (必须设置，用于导入 BiCodec 类)
 SPARK_TTS_CODE_DIR = "/root/Spark-TTS-main"
 
-# 2. 模型文件夹路径 (该目录下必须有 model.safetensors 和 config.json)
+# 2. 模型文件夹路径 (该目录下必须有 model.safetensors 和 config.yaml)
 BICODEC_DIR = "./Bicodec"
 MODEL_FILENAME = "model.safetensors"  # 你的文件名
 
@@ -43,7 +43,6 @@ def main():
     # 1. 检查文件
     if not os.path.exists(config_path):
         print(f"❌ 错误：找不到配置文件 {config_path}")
-        print("Safetensors 格式只存了参数，由于不知道模型结构，必须要有 config.json 才能初始化模型！")
         return
 
     # 2. 初始化模型结构
